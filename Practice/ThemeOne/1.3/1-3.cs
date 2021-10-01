@@ -19,8 +19,19 @@ namespace _1._3
 
             try
             {
+                // Обычный метод - ввод последовательный 
                 SequenceHandlerWithoutArray.ProcessingSequenceOfRationalNumbersSequenceInput(out amountOfNumbers, out min, out max, 
                     out sum, out arithmeticalMean);
+
+                // Обычный метод - ввод одиночный - через enter 
+                //SequenceHandlerWithoutArray.ProcessingSequenceOfRationalNumbersSingleInput(out amountOfNumbers, out min, out max,
+                //    out sum, out arithmeticalMean);
+
+                // C Помощью массива 
+                //SequenceHandlerWithArray.ProcessingSequence(out amountOfNumbers, out min, out max,
+                //    out sum, out arithmeticalMean);
+
+
                 Console.WriteLine(GetResult(amountOfNumbers, min, max, arithmeticalMean));
             }
             catch (Exception ex)
