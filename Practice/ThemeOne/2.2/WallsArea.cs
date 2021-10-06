@@ -16,8 +16,8 @@ namespace _2._2
                 GetRoomParameters(out length, out width, out height);
                 wallsArea = CalculateWallsArea(length, width, height);
 
-                wallsArea = Nikak("окон", "окна", wallsArea);
-                wallsArea = Nikak("дверей", "двери", wallsArea);
+                wallsArea = AccountingAreaOfApertures("окон", "окна", wallsArea);
+                wallsArea = AccountingAreaOfApertures("дверей", "двери", wallsArea);
 
                 PrintResultWallsArea(wallsArea);
             }
@@ -25,7 +25,7 @@ namespace _2._2
 
         }
 
-        static double Nikak(string apertureTypePlural, string apertureTypeSingular, double wallsArea)
+        static double AccountingAreaOfApertures(string apertureTypePlural, string apertureTypeSingular, double wallsArea)
         {
             int apertureCount;
             double length,
