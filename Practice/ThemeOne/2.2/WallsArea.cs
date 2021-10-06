@@ -84,8 +84,7 @@ namespace _2._2
 
         private static void InputCotrol(string input, out int variable)
         {
-            if (!int.TryParse(input, out variable))
-                throw new Exception("Invlaid Input");
+            variable = int.Parse(input);
         }
 
         static void PrintResultWallsArea(double wallsArea)
