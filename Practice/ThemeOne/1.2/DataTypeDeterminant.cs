@@ -19,24 +19,17 @@ namespace _1._2
             {
                 return "Integer";
             }
-            else
+            if (double.TryParse(inputValue, out _))
             {
-                if (double.TryParse(inputValue, out _))
-                {
-                    return "Rational Number";
-                }
-                else
-                {
-                    if (bool.TryParse(inputValue, out _))
-                    {
-                        return "Boolean";
-                    }
-                    else
-                    {
-                        return "Text";
-                    }
-                }
+                return "Rational Number";
             }
+            if (bool.TryParse(inputValue, out _))
+            {
+                return "Boolean";
+            }
+            return "Text";
         }
+    }
+}
     }
 }
