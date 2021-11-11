@@ -9,16 +9,18 @@ namespace _1._2
         class User
         {
             public string Name { get; }
-            public List<string> Lyubimki { get; }
+            public HashSet<string> Lyubimki { get; }
 
             public User(string name, List<string> lyubimki)
             {
                 Name = name;
-                Lyubimki = lyubimki;
+                Lyubimki = new HashSet<string>();
+                foreach (var lbmk in lyubimki)
+                {
+                    Lyubimki.Add(lbmk);
+                }
             }
         }
-
-
 
         static void Main()
         {
@@ -85,7 +87,7 @@ namespace _1._2
                 foreach (var lyubimka in user.Lyubimki)
                 {
                     string lyubimkaStr = lyubimka;
-                    int amount = users.Where(user => user.Lyubimki.Any(lbmk => lbmk == lyubimka)).ToList().Count;
+                    int amount = users.Where(user => user.Lyubimki.Contains(lyubimka)).Count();
                     string lyubimkaPlusCount = lyubimkaStr +"-" + amount;
                     if(!lyubimki.Contains(lyubimkaPlusCount))
                         lyubimki.Add(lyubimkaPlusCount);
