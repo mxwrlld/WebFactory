@@ -7,6 +7,7 @@ namespace _1._3
     class BracketsSequence
     {
         private static Stack<string> bracketsStack = new Stack<string>();
+        private static List<int> entryIndexes = new List<int>();
         private static string[] initialBrackets = new string[] { "(", "{", "[", "<" };
         private static string[] endBrackets = new string[] { ")", "}", "]", ">" };
 
@@ -49,54 +50,23 @@ namespace _1._3
 
         private static bool IsBracketsSequenceTrue(StringBuilder input, out int errorIndex, out string errorMessage)
         {
-            bool isSequenceFailed = false,
-                 isMatchFound;
+            bool isSequenceBroken = false;
             errorIndex = -1;
             errorMessage = String.Empty;
-            List<int> entryIndexes = new List<int>();
+            bracketsStack.Clear();
 
             for (int i = 0; i < input.Length; ++i)
             {
-                isMatchFound = false;
-                foreach (var initialBracket in initialBrackets)
-                {
-                    if (input[i].ToString() == initialBracket)
-                    {
-                        bracketsStack.Push(input[i].ToString());
-                        entryIndexes.Add(i);
-                        isMatchFound = true;
-                        break;
-                    }
-                }
-                if (isMatchFound)
+                if (IsInitialBracket(input[i], i))
                     continue;
-                for (int j = 0; j < endBrackets.Length; ++j)
-                {
-                    if (input[i].ToString() == endBrackets[j])
-                    {
-                        if (bracketsStack.Count != 0)
-                        {
-                            var bracket = bracketsStack.Pop();
-                            if (bracket == initialBrackets[j])
-                            {
-                                entryIndexes.RemoveAt(entryIndexes.Count - 1);
-                            }
-                            else
-                            {
-                                isSequenceFailed = true;
-                            }
-                            break;
-                        }
-                        else
-                        {
-                            isSequenceFailed = true;
-                            errorMessage = "Не хватает открывающих скобок";
-                        }
-                    }
-                }
 
+                if (IsSequenceBroken(input[i], i, out errorMessage))
+                {
+                    isSequenceBroken = true;
+                    break;
+                }
             }
-            if (isSequenceFailed || bracketsStack.Count != 0)
+            if (isSequenceBroken || bracketsStack.Count != 0)
             {
                 if (entryIndexes.Count != 0)
                 {
@@ -107,6 +77,48 @@ namespace _1._3
             return true;
         }
 
+        private static bool IsInitialBracket(char input, int inputIndex)
+        {
+            foreach (var initialBracket in initialBrackets)
+            {
+                if (input.ToString() == initialBracket)
+                {
+                    bracketsStack.Push(input.ToString());
+                    entryIndexes.Add(inputIndex);
+                    return true;
+                }
+            }
+            return false;
+        }
 
+        private static bool IsSequenceBroken(char input, int inputIndex, out string errorMessage)
+        {
+            errorMessage = String.Empty;
+            for (int j = 0; j < endBrackets.Length; ++j)
+            {
+                if (input.ToString() == endBrackets[j])
+                {
+                    if (bracketsStack.Count != 0)
+                    {
+                        var bracket = bracketsStack.Pop();
+                        if (bracket == initialBrackets[j])
+                        {
+                            entryIndexes.RemoveAt(entryIndexes.Count - 1);
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        errorMessage = "Не хватает открывающих скобок";
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 }
