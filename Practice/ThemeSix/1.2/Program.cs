@@ -14,7 +14,7 @@ namespace _1._2
                 {
                     Console.WriteLine();
                     Console.Write("Введите текст: ");
-                    string value = Console.ReadLine();
+                    string value = Console.ReadLine().Trim();
                     int foundIndex = values.IndexOf(value);
                     if (foundIndex != -1)
                         throw new AlreadyExistsException("Значение было введено ранее", value, foundIndex);
