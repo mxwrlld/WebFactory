@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="_2._1.ProgramModel.Dealer">
+    <Position X="2.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAQAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramModel\Dealer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="_2._1.ProgramModel.Manufacturer">
+    <Position X="7.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>ProgramModel\Manufacturer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="_2._1.ProgramModel.Product" Collapsed="true">
+    <Position X="5.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAQAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>ProgramModel\Product.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="_2._1.ProgramModel.Provider">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAAAAAAAQAAAAAAAACAAAAAAAACAA=</HashCode>
+      <FileName>ProgramModel\Provider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

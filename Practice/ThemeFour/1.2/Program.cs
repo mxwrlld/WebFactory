@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using _2._1.ProgramModel;
 
-namespace _1._2
+namespace _2._1
 {
     class Program
     {
@@ -33,117 +34,147 @@ namespace _1._2
             "Машинка постирочная"
         };
 
+        private static List<string> manufacturerNames = new List<string>()
+            {
+                "OOO Хороший день",
+                "OOO Невероятный полдень",
+                "OOO Потрясающий вечер",
+                "OOO Изумительная ночь",
+                "OOO Борящее утро",
+            };
+
+        private static List<string> addresses = new List<string>()
+            {
+                "Первая просека",
+                "Вторая просека",
+                "Третья просека",
+                "Четвертая просека",
+                "Пятая просека",
+                "Первая рабочая",
+                "Вторая рабочая",
+                "Третья рабочая",
+            };
+
+        private static List<string> dealerNames = new List<string>()
+            {
+                "ИП Егор",
+                "ИП Давид",
+                "ИП Варвара",
+            };
+
         static void Main()
         {
-            List<Manufacturer> manufacturers = GetMockManufacturers();
-            List<Dealer> dealers = GetMockDealers(manufacturers);
-            List<Dealer> foundDealers;
+            List<Provider> providers = GetMockProviders();
 
             Console.Write("Введите строку поиска: ");
             string searchBy = Console.ReadLine().Trim().ToLower();
 
-            List<Manufacturer> foundManufacturers = Search(manufacturers, dealers, searchBy, out foundDealers);
-            PrintResult(foundManufacturers, foundDealers);
+            var foundProviders = Search(providers, searchBy);
+
+            PrintResult(foundProviders);
         }
 
-        private static void PrintResult(List<Manufacturer> manufacturers, List<Dealer> dealers)
+        private static void PrintResult(List<Provider> providers)
         {
-            if (manufacturers.Count == 0 && dealers.Count == 0)
+            if (providers.Count == 0)
             {
                 Console.WriteLine();
                 Console.WriteLine("Товары по запросу не найдены");
                 return;
             }
-            // Для предприятий
-            Console.WriteLine("Товары:");
-            foreach (var manufacturer in manufacturers)
+
+            foreach(var provider in providers)
             {
-                var nomenclature = manufacturer.Nomenclature;
-                
-                foreach (var product in nomenclature)
-                {
-                    Console.Write($"{product.Name} - ");
-                    Console.WriteLine($"{product.Price:C2}");
-                }
-                Console.WriteLine("Поставщик:");
-                Console.Write($"{manufacturer.Name} - ");
-                Console.Write($"{manufacturer.TIN} - ");
-                Console.Write($"{manufacturer.Address}");
-                Console.WriteLine();
-                Console.WriteLine(new string('-', Console.WindowWidth / 3));
+                string providerToPrint = GetProviderToPrint(provider);
+                Console.WriteLine(providerToPrint);
             }
-            Console.WriteLine(new string('-', Console.WindowWidth));
-
-            Console.WriteLine("Товары:");
-            // Для дилеров
-            foreach (var dealer in dealers)
-            {
-                var manufacturer = dealer.Manufacturer;
-                var nomenclature = manufacturer.Nomenclature;
-                foreach (var product in nomenclature)
-                {
-                    Console.Write($"{product.Name} - ");
-                    Console.WriteLine($"{dealer.GetPriceWithExtraCharge(product):C2}");
-                }
-                Console.WriteLine("Поставщик:");
-                Console.Write($"{dealer.Name} - ");
-                Console.Write($"{dealer.TIN} - ");
-                Console.Write($"{dealer.Address}");
-                Console.Write($" ({manufacturer.Name})");
-                Console.WriteLine();
-                Console.WriteLine(new string('-', Console.WindowWidth / 2));
-            }
-
-            Console.WriteLine(new string('-', Console.WindowWidth));
-
         }
 
-        private static List<Manufacturer> Search(List<Manufacturer> manufacturers, List<Dealer> dealers, string searchBy
-            , out List<Dealer> foundDealers)
+        private static string GetProviderToPrint(Provider provider)
         {
-            List<Manufacturer> foundManufacturers = new List<Manufacturer>();
-            List<Product> foundProducts;
-            for (int i = 0; i < manufacturers.Count; i++)
+            string providerToPrint = String.Empty;
+            bool isProviderDealer = provider is Dealer ? true : false;
+
+            providerToPrint += "\nПоставщик:\n";
+            providerToPrint += provider.ToString() + "\n";
+
+            if (provider.Nomenclature.Count == 1)
+                providerToPrint += "Товар: \n";
+            else
+                providerToPrint += "Товары: \n";
+
+            foreach (var product in provider.Nomenclature)
             {
-                var nomenclature = manufacturers[i].Nomenclature;
-                foundProducts = new List<Product>();
-                for (int j = 0; j < nomenclature.Count; j++)
+                if (isProviderDealer)
                 {
-                    if(nomenclature[j].Name.ToLower().Contains(searchBy)
-                        || nomenclature[j].VendorCode.ToLower().Contains(searchBy))
+                    product.Price = (provider as Dealer).GetPriceWithExtraCharge(product);
+                }
+                providerToPrint += product.ToString() + "\n";
+                providerToPrint += new string('-', Console.WindowWidth / 3) + "\n";
+            }
+            providerToPrint += new string('-', Console.WindowWidth) + "\n";
+
+            return providerToPrint;
+        }
+
+        private static List<Provider> Search(List<Provider> providers, string searchBy)
+        {
+            List<Provider> foundProviders = new List<Provider>();
+            List<Product> foundProducts;
+
+            for(int i = 0; i < providers.Count; ++i)
+            {
+                var provider = providers[i];
+                var nomenclature = provider.Nomenclature;
+                foundProducts = new List<Product>();
+
+                foreach (var product in nomenclature)
+                {
+                    if (product.Name.ToLower().Contains(searchBy)
+                        || product.VendorCode.ToLower().Contains(searchBy))
                     {
-                        foundProducts.Add(nomenclature[j]);
+                        foundProducts.Add(new Product(product));
                     }
                 }
                 if(foundProducts.Count != 0)
                 {
-                    foundManufacturers.Add(new Manufacturer(manufacturers[i].TIN, manufacturers[i].Name,
-                        manufacturers[i].Address, foundProducts));
-                }
-            }
-
-            foundDealers = new List<Dealer>();
-            for (int i = 0; i < foundManufacturers.Count; i++)
-            {
-                for (int j = 0; j < dealers.Count; j++)
-                {
-                    if (dealers[j].Manufacturer.Equals(foundManufacturers[i]))
+                    if (provider is Manufacturer)
                     {
-                        dealers[j].Manufacturer.Nomenclature = foundManufacturers[i].Nomenclature;
-                        foundDealers.Add(new Dealer(dealers[j].TIN, dealers[j].Name,
-                            dealers[j].Address, dealers[j].Manufacturer, dealers[j].ExtraCharge));
+                        var newManufacturer = new Manufacturer(provider.TIN, provider.Name, provider.Address, 
+                            foundProducts);
+                        foundProviders.Add(newManufacturer);
+                    }
+                    else
+                    {
+                        var dealer = provider as Dealer;
+                        var newManufacturer = new Manufacturer(dealer.Manufacturer.TIN, dealer.Manufacturer.Name, dealer.Manufacturer.Address, foundProducts);
+                        foundProviders.Add(new Dealer(provider.TIN, provider.Name, provider.Address,
+                            newManufacturer, dealer.ExtraCharge));
+
                     }
                 }
+                
             }
-
-            return foundManufacturers;
+            return foundProviders;
         }
+
+        private static List<Provider> GetMockProviders()
+        {
+            List<Provider> providers = new List<Provider>();
+            List<Manufacturer> manufacturers = GetMockManufacturers();
+            List<Dealer> dealers = GetMockDealers(manufacturers);
+
+            dealers.ForEach(x => providers.Add(x));
+            manufacturers.ForEach(x => providers.Add(x));
+
+            return providers;
+        }
+
         private static List<Product> GetMockProducts()
         {
             Random rand = new Random();
-            int startOfRange = 10000;
-            int endOfRange = 90000;
             int amountOfProducts = rand.Next(10, 15);
+            int startOfRange = 10000, endOfRange = 90000;
             List<string> vendorCodes = new List<string>();
             for (int i = 0; i < amountOfProducts; ++i)
             {
@@ -167,7 +198,7 @@ namespace _1._2
             }
 
 
-            List<Product> products = new List<Product>(amountOfProducts);
+            List<Product> products = new List<Product>();
             for (int i = 0; i < amountOfProducts; i++)
             {
                 products.Add(new Product(vendorCodes[i], names[i], rand.Next(100, 1000) / 100));
@@ -178,44 +209,18 @@ namespace _1._2
         private static List<Manufacturer> GetMockManufacturers()
         {
             int amountOfManufacturers = 5;
-            Random rand = new Random();
-            int startOfRange = 10000;
-            int endOfRange = 90000;
-            List<string> tins = new List<string>();
-            for (int i = 0; i < amountOfManufacturers; ++i)
-            {
-                tins.Add(rand.Next(startOfRange, endOfRange).ToString()
-                    + rand.Next(startOfRange, endOfRange).ToString());
-            }
+            List<string> tins = GenerateTINs(amountOfManufacturers);
 
-            List<string> names = new List<string>()
-            {
-                "OOO Хороший день",
-                "OOO Невероятный полдень",
-                "OOO Потрясающий вечер",
-                "OOO Изумительная ночь",
-                "OOO Борящее утро",
-            };
-
-            List<string> addresses = new List<string>()
-            {
-                "Первая просека",
-                "Вторая просека",
-                "Третья просека",
-                "Четвертая просека",
-                "Пятая просека"
-            };
-
-            List<List<Product>> nomenclatures = new List<List<Product>>(amountOfManufacturers);
+            List<List<Product>> nomenclatures = new List<List<Product>>();
             for (int i = 0; i < amountOfManufacturers; ++i)
             {
                 nomenclatures.Add(GetMockProducts());
             }
 
-            List<Manufacturer> manufacturers = new List<Manufacturer>(amountOfManufacturers);
+            List<Manufacturer> manufacturers = new List<Manufacturer>();
             for (int i = 0; i < amountOfManufacturers; ++i)
             {
-                manufacturers.Add(new Manufacturer(tins[i], names[i], addresses[i], nomenclatures[i]));
+                manufacturers.Add(new Manufacturer(tins[i], manufacturerNames[i], addresses[i], nomenclatures[i]));
             }
 
             return manufacturers;
@@ -225,21 +230,7 @@ namespace _1._2
         {
             int amountOfDealers = 3;
             List<string> tins = GenerateTINs(amountOfDealers);
-            List<Dealer> dealers = new List<Dealer>(amountOfDealers);
-            List<string> names = new List<string>()
-            {
-                "ИП Егор",
-                "ИП Давид",
-                "ИП Варвара",
-            };
-
-            List<string> addresses = new List<string>()
-            {
-                "Первая рабочая",
-                "Вторая рабочая",
-                "Третья рабочая",
-            };
-
+            List<Dealer> dealers = new List<Dealer>();
             List<double> extraCharges = new List<double>(amountOfDealers);
             Random rand = new Random();
             for (int i = 0; i < amountOfDealers; ++i)
@@ -247,9 +238,9 @@ namespace _1._2
                 extraCharges.Add(rand.NextDouble());
             }
 
-            dealers.Add(new Dealer(tins[0], names[0], addresses[0], manufacturers[0], extraCharges[0]));
-            dealers.Add(new Dealer(tins[1], names[1], addresses[1], manufacturers[3], extraCharges[1]));
-            dealers.Add(new Dealer(tins[2], names[2], addresses[2], manufacturers[4], extraCharges[2]));
+            dealers.Add(new Dealer(tins[0], dealerNames[0], addresses[addresses.Count - 3], manufacturers[0], extraCharges[0]));
+            dealers.Add(new Dealer(tins[1], dealerNames[1], addresses[addresses.Count - 2], manufacturers[3], extraCharges[1]));
+            dealers.Add(new Dealer(tins[2], dealerNames[2], addresses[addresses.Count - 1], manufacturers[4], extraCharges[2]));
 
             return dealers;
         }
@@ -257,9 +248,8 @@ namespace _1._2
         private static List<string> GenerateTINs(int amount)
         {
             Random rand = new Random();
-            int startOfRange = 10000;
-            int endOfRange = 90000;
-            List<string> tins = new List<string>(amount);
+            int startOfRange = 10000, endOfRange = 90000;
+            List<string> tins = new List<string>();
             for (int i = 0; i < amount; ++i)
             {
                 tins.Add(rand.Next(startOfRange, endOfRange).ToString()
@@ -267,84 +257,6 @@ namespace _1._2
             }
 
             return tins;
-        }
-    }
-
-
-
-    class Provider
-    {
-        public string TIN { get; set; }
-        public string Name { get; set; }
-        public string Address { get; set; }
-
-        public Provider(string tIN, string name, string address)
-        {
-            TIN = tIN;
-            Name = name;
-            Address = address;
-        }
-    }
-
-    class Manufacturer : Provider
-    {
-        public List<Product> Nomenclature { get; set; }
-
-        public Manufacturer(string tin, string name, string address, List<Product> nomenclature): base(tin, name, address)
-        {
-            Nomenclature = nomenclature;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is Manufacturer manufacturer &&
-                   TIN == manufacturer.TIN &&
-                   Name == manufacturer.Name &&
-                   Address == manufacturer.Address;
-        }
-    }
-
-    class Product
-    {
-        private string vendorCode;
-        public string VendorCode
-        {
-            get => vendorCode;
-            set
-            {
-                if (value.Length >= 10 && value.Length <= 15)
-                    vendorCode = value;
-                else
-                    throw new ArgumentOutOfRangeException("Артикул - набор из 10-15 цифр");
-            }
-        }
-
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-
-        public Product(string vendorCode, string name, decimal price)
-        {
-            VendorCode = vendorCode;
-            Name = name;
-            Price = price;
-        }
-    }
-
-    class Dealer : Provider
-    {
-        public Manufacturer Manufacturer { get; set; }
-        public double ExtraCharge { get; set; }
-
-        public Dealer(string tin, string name, string address, Manufacturer manufacturer, double extraCharge): base(tin, name, address)
-        {
-            Manufacturer = manufacturer;
-            ExtraCharge = extraCharge;
-        }
-
-        public decimal GetPriceWithExtraCharge(Product product)
-        {
-            decimal price = product.Price;
-            return price + (price * (decimal)ExtraCharge);
         }
     }
 }
