@@ -33,8 +33,9 @@ namespace _1._3
         private static string[] GetSequenceOfUppercaseWords(string input)
         {
             string[] wordsSequence = input.Split(" ");
-            wordsSequence = wordsSequence.Select(x => x.ToUpper()).ToArray();
-            Array.Sort(wordsSequence);
+            wordsSequence = wordsSequence.Select(word => word.ToUpper())
+                                         .OrderBy(word=>word)
+                                         .ToArray();
             return wordsSequence;
         }
     }
