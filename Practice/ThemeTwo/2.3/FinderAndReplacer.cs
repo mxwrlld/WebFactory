@@ -27,7 +27,6 @@ namespace _2._3
                             Console.WriteLine("\nПОИСК");
                             Console.Write("Введите искомое: ");
                             string searchLine = Console.ReadLine();
-                            string text = srcText.Substring(0);
 
                             int[] indexesOfStartHighlighting = FindIndexesOfSearchStatemet(srcText, searchLine);
                             if (indexesOfStartHighlighting.Length == 0)
@@ -89,45 +88,6 @@ namespace _2._3
 
             return changedText;
         }
-
-        private static void Find(string text, string searchLine)
-        {
-
-            bool isSearchSucces = false;
-            do
-            {
-                if (text.Contains(searchLine, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    isSearchSucces = true;
-                    int firstIndex = text.IndexOf(searchLine, StringComparison.CurrentCultureIgnoreCase);
-                    int lastIndex = firstIndex + searchLine.Length;
-                    string beforeFoundLine = text.Substring(0, firstIndex);
-                    Console.Write(beforeFoundLine);
-
-                    string foundLine = text.Substring(firstIndex, searchLine.Length);
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write(foundLine);
-                    Console.ResetColor();
-
-                    string afterFoundLine = text.Substring(lastIndex, text.Length - lastIndex);
-
-                    text = afterFoundLine;
-                }
-                else
-                {
-                    if (!isSearchSucces)
-                        Console.WriteLine("Совпадений не найдено!");
-                    else
-                    {
-                        if (text.Length != 0)
-                            Console.Write(text);
-                    }
-                    break;
-                }
-            }
-            while (true);
-        }
-
 
         private static void PrintWithHighlighting(string text, string highlightingStatement, int[] indexesOfStartHL)
         {
