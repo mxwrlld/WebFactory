@@ -67,39 +67,39 @@ namespace _2._2
                 }
 
                 int index;
-                if (charCodeCurrent >= 1040 && charCodeCurrent <= 1071)
+                if (charCodeCurrent >= 'А' && charCodeCurrent <= 'Я')
                 {
                     if (!isWordContainsLCLetter)
                     {
-                        index = charCodeCurrent - 1040;
-                        transliteratedText.Append(latinTransliteration[index].ToString().ToUpper());
+                        index = charCodeCurrent - 'А';
+                        transliteratedText.Append(latinTransliteration[index].ToUpper());
                         continue;
                     }
                     else
                     {
-                        index = charCodeCurrent - 1040;
+                        index = charCodeCurrent - 'А';
                         transliteratedText.Append((latinTransliteration[index].Length == 1) ?
-                            latinTransliteration[index].ToString().ToUpper() :
+                            latinTransliteration[index].ToUpper() :
                             (latinTransliteration[index][0].ToString().ToUpper() +
                             latinTransliteration[index].Substring(1)));
                         continue;
                     }
 
                 }
-                if (charCodeCurrent >= 1072 && charCodeCurrent <= 1103)
+                if (charCodeCurrent >= 'а' && charCodeCurrent <= 'я')
                 {
-                    index = charCodeCurrent - 1072;
+                    index = charCodeCurrent - 'а';
                     transliteratedText.Append(latinTransliteration[index]);
                     continue;
                 }
-                if (charCodeCurrent == 1025 || charCodeCurrent == 1105)
+                if (charCodeCurrent == 'Ё' || charCodeCurrent == 'ё')
                 {
-                    if(charCodeCurrent == 1025)
+                    if(charCodeCurrent == 'Ё')
                     {
                         transliteratedText.Append((isWordContainsLCLetter) ?
                             (latinTransliteration[latinTransliteration.Length - 1][0].ToString().ToUpper() +
                             latinTransliteration[latinTransliteration.Length - 1].Substring(1)) :
-                            latinTransliteration[latinTransliteration.Length - 1].ToString().ToUpper());
+                            latinTransliteration[latinTransliteration.Length - 1].ToUpper());
                         continue;
                     }
                     else
@@ -108,7 +108,7 @@ namespace _2._2
                         continue;
                     }
                 }
-                if(charCodeCurrent == 32)
+                if(charCodeCurrent == ' ')
                 {
                     isEndOfWord = true; 
                 }
@@ -120,16 +120,15 @@ namespace _2._2
 
         private static bool IsWordContainsLowercaseLetter(string word)
         {
-            bool isLCLetter = false;
             foreach (var letter in word)
             {
-                if(letter >= 1072 && letter <= 1103 || letter == 1105)
+                if(letter >= 'а' && letter <= 'я' || letter == 'ё')
                 {
-                    isLCLetter = true;
+                    return true;
                 }
 
             }
-            return isLCLetter;
+            return false;
         }
     }
 }
