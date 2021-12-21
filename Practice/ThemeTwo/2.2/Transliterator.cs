@@ -49,80 +49,71 @@ namespace _2._2
         private static string Transliterating(string russianText)
         {
             StringBuilder transliteratedText = new StringBuilder();
-            bool isWordContainsLCLetter = false,
-                isEndOfWord = true;
 
-            string[] words = russianText.Split(" ");
-            int wordsIterator = 0; 
+            string[] words = russianText.Split(" "); 
 
-            for (int i = 0; i < russianText.Length; ++i)
+            foreach (var word in words)
             {
-                int charCodeCurrent = (int)russianText[i];
-
-                if (isEndOfWord)
+                for (int j = 0; j < word.Length; ++j)
                 {
-                    isWordContainsLCLetter = IsWordContainsLowercaseLetter(words[wordsIterator]);
-                    wordsIterator++;
-                    isEndOfWord = false;
+                    char currentChar = word[j];
+                    string transilteratedWord = WordTransliterating(word: word, symbol: currentChar);
+                    transliteratedText.Append(transilteratedWord);
                 }
-
-                int index;
-                if (charCodeCurrent >= 'А' && charCodeCurrent <= 'Я')
-                {
-                    if (!isWordContainsLCLetter)
-                    {
-                        index = charCodeCurrent - 'А';
-                        transliteratedText.Append(latinTransliteration[index].ToUpper());
-                        continue;
-                    }
-                    else
-                    {
-                        index = charCodeCurrent - 'А';
-                        transliteratedText.Append((latinTransliteration[index].Length == 1) ?
-                            latinTransliteration[index].ToUpper() :
-                            (latinTransliteration[index][0].ToString().ToUpper() +
-                            latinTransliteration[index].Substring(1)));
-                        continue;
-                    }
-
-                }
-                if (charCodeCurrent >= 'а' && charCodeCurrent <= 'я')
-                {
-                    index = charCodeCurrent - 'а';
-                    transliteratedText.Append(latinTransliteration[index]);
-                    continue;
-                }
-                if (charCodeCurrent == 'Ё' || charCodeCurrent == 'ё')
-                {
-                    if(charCodeCurrent == 'Ё')
-                    {
-                        transliteratedText.Append((isWordContainsLCLetter) ?
-                            (latinTransliteration[latinTransliteration.Length - 1][0].ToString().ToUpper() +
-                            latinTransliteration[latinTransliteration.Length - 1].Substring(1)) :
-                            latinTransliteration[latinTransliteration.Length - 1].ToUpper());
-                        continue;
-                    }
-                    else
-                    {
-                        transliteratedText.Append(latinTransliteration[latinTransliteration.Length - 1]);
-                        continue;
-                    }
-                }
-                if(charCodeCurrent == ' ')
-                {
-                    isEndOfWord = true; 
-                }
-                transliteratedText.Append(russianText[i]);
+                transliteratedText.Append(" ");
             }
 
             return transliteratedText.ToString();
+        }
+
+        private static string WordTransliterating(string word, char symbol)
+        {
+            bool isWordContainsLCLetter = IsWordContainsLowercaseLetter(word);
+            int index;
+            if (symbol >= 'А' && symbol <= 'Я')
+            {
+                index = symbol - 'А';
+                if (!isWordContainsLCLetter)
+                {                    
+                    return (latinTransliteration[index].ToUpper());
+                }
+                else
+                {
+                    return ((latinTransliteration[index].Length == 1) ?
+                        latinTransliteration[index].ToUpper() :
+                        (latinTransliteration[index][0].ToString().ToUpper() +
+                        latinTransliteration[index].Substring(1)));
+                }
+
+            }
+            if (symbol >= 'а' && symbol <= 'я')
+            {
+                index = symbol - 'а';
+                return (latinTransliteration[index]);
+            }
+            if (symbol == 'Ё' || symbol == 'ё')
+            {
+                if (symbol == 'Ё')
+                {
+                    return ((isWordContainsLCLetter) ?
+                        (latinTransliteration[latinTransliteration.Length - 1][0].ToString().ToUpper() +
+                        latinTransliteration[latinTransliteration.Length - 1].Substring(1)) :
+                        latinTransliteration[latinTransliteration.Length - 1].ToUpper());
+                }
+                else
+                {
+                    return (latinTransliteration[latinTransliteration.Length - 1]);
+                }
+            }
+
+            return symbol.ToString();
         }
 
         private static bool IsWordContainsLowercaseLetter(string word)
         {
             foreach (var letter in word)
             {
-                if(letter >= 'а' && letter <= 'я' || letter == 'ё')
+                if (letter >= 'а' && letter <= 'я' || letter == 'ё')
                 {
                     return true;
                 }
